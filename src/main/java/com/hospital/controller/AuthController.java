@@ -33,7 +33,7 @@ public class AuthController {
             Admin admin = adminMapper.selectById(account);
             if (admin != null && checkPwd(password, admin.getPassword())) {
                 StpUtil.login(account);
-                StpUtil.getSession().set("role", "admin");
+                StpUtil.getTokenSession().set("role", "admin");
                 Map<String, Object> userInfo = new HashMap<>();
                 userInfo.put("id", admin.getAccount());
                 userInfo.put("account", admin.getAccount());
@@ -47,7 +47,7 @@ public class AuthController {
             Doctor doctor = doctorMapper.selectOne(w);
             if (doctor != null && checkPwd(password, doctor.getPassword())) {
                 StpUtil.login(doctor.getDid().toString());
-                StpUtil.getSession().set("role", "doctor");
+                StpUtil.getTokenSession().set("role", "doctor");
                 Map<String, Object> userInfo = new HashMap<>();
                 userInfo.put("id", doctor.getDid());
                 userInfo.put("account", doctor.getAccount());
@@ -62,7 +62,7 @@ public class AuthController {
             Patient patient = patientMapper.selectOne(w);
             if (patient != null && checkPwd(password, patient.getPassword())) {
                 StpUtil.login(patient.getPid().toString());
-                StpUtil.getSession().set("role", "patient");
+                StpUtil.getTokenSession().set("role", "patient");
                 Map<String, Object> userInfo = new HashMap<>();
                 userInfo.put("id", patient.getPid());
                 userInfo.put("account", patient.getAccount());

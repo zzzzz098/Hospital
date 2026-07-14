@@ -23,7 +23,7 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public ResponseResult<Map<String, Long>> dashboard() {
-        StpUtil.checkRole("doctor");
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
         Map<String, Long> stats = new HashMap<>();
         stats.put("patients", patientMapper.selectCount(null));
         stats.put("doctors", doctorMapper.selectCount(null));
@@ -34,7 +34,7 @@ public class AdminController {
 
     @GetMapping("/patients")
     public ResponseResult<List<Map<String, Object>>> patients() {
-        StpUtil.checkRole("doctor");
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
         List<Map<String, Object>> list = new ArrayList<>();
         for (Patient p : patientMapper.selectList(null)) {
             Map<String, Object> m = new HashMap<>();
@@ -50,13 +50,13 @@ public class AdminController {
 
     @GetMapping("/appointments")
     public ResponseResult<List<Recode>> appointments() {
-        StpUtil.checkRole("doctor");
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
         return ResponseResult.success(recodeMapper.selectList(null));
     }
 
     @PutMapping("/schedule/{wid}")
     public ResponseResult<String> updateSchedule(@PathVariable Integer wid, @RequestBody Map<String, Object> body) {
-        StpUtil.checkRole("doctor");
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
         WorkDay wd = workDayMapper.selectById(wid);
         if (wd != null) {
             if (body.get("state") != null) wd.setState((String) body.get("state"));
@@ -68,7 +68,7 @@ public class AdminController {
 
     @PostMapping("/medicine-push")
     public ResponseResult<String> createPush(@RequestBody Map<String, String> body) {
-        StpUtil.checkRole("doctor");
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
         MedicinePush push = new MedicinePush();
         push.setTitle(body.get("title"));
         push.setContent(body.get("content"));

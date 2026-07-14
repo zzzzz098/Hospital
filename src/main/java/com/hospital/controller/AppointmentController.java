@@ -46,7 +46,7 @@ public class AppointmentController {
 
     @GetMapping("/all")
     public ResponseResult<List<Recode>> allList() {
-        StpUtil.checkRole("doctor");
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
         LambdaQueryWrapper<Recode> w = new LambdaQueryWrapper<>();
         w.orderByDesc(Recode::getOrdertime);
         return ResponseResult.success(recodeMapper.selectList(w));

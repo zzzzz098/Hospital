@@ -40,7 +40,7 @@ public class MessageController {
 
     @GetMapping("/all")
     public ResponseResult<List<Message>> allList() {
-        StpUtil.checkRole("doctor");
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
         LambdaQueryWrapper<Message> w = new LambdaQueryWrapper<>();
         w.orderByDesc(Message::getCreateTime);
         return ResponseResult.success(messageMapper.selectList(w));
@@ -48,7 +48,7 @@ public class MessageController {
 
     @PutMapping("/{id}/reply")
     public ResponseResult<String> reply(@PathVariable Integer id, @RequestBody Map<String, String> body) {
-        StpUtil.checkRole("doctor");
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
         Message msg = messageMapper.selectById(id);
         if (msg != null) {
             msg.setReply(body.get("reply"));
