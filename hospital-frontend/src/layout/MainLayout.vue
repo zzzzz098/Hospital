@@ -26,6 +26,7 @@
     </header>
     <main class="main-content">
       <div class="container">
+        <router-link v-if="$route.path !== '/'" to="/" class="back-link">← 返回首页</router-link>
         <router-view />
       </div>
     </main>
@@ -59,5 +60,7 @@ function handleLogout() { store.logout(); router.push('/') }
 .header .btn-outline:hover { background: #fff; color: #2d8f5e; }
 .header .btn-primary { background: #fff; color: #2d8f5e; padding: 6px 16px; font-size: 13px; }
 .main-content { flex: 1; margin-top: 60px; padding: 30px 0; }
+.back-link { display: inline-block; color: #2d8f5e; font-size: 14px; margin-bottom: 16px; padding: 6px 12px; border-radius: 6px; background: #e8f5e9; transition: background 0.2s; }
+.back-link:hover { background: #c8e6c9; }
 .footer { background: #1a6b40; color: rgba(255,255,255,0.7); text-align: center; padding: 20px; font-size: 13px; margin-top: auto; }
 </style>

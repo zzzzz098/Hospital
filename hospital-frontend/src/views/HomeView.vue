@@ -9,7 +9,7 @@
     <section class="features">
       <h2 class="section-title">系统功能</h2>
       <div class="grid-3">
-        <router-link :to="f.link" class="card feature-card" v-for="f in features" :key="f.title">
+        <router-link v-for="f in visibleFeatures" :key="f.title" :to="f.link" class="card feature-card">
           <div class="feature-icon">{{ f.icon }}</div>
           <h3>{{ f.title }}</h3>
           <p>{{ f.desc }}</p>
@@ -29,18 +29,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
 import { adminApi } from '@/api/admin'
 import type { MedicinePush } from '@/types'
 
-const features = [
+const store = useUserStore()
+
+const allFeatures = [
   { icon: '🔍', title: '科室医生查询', desc: '按科室或姓名快速查找医生，查看医生详情与排班信息', link: '/doctors' },
   { icon: '📅', title: '在线预约挂号', desc: '选择合适时段在线预约，方便快捷免排队', link: '/doctors' },
   { icon: '📋', title: '预约记录管理', desc: '随时查看预约记录，支持取消或修改预约', link: '/my-appointments' },
   { icon: '💬', title: '在线问诊留言', desc: '向医生在线留言咨询，获取专业医疗建议', link: '/messages' },
-  { icon: '📊', title: '后台数据管理', desc: '医生可管理患者档案、排班及预约数据统计', link: '/admin/data' },
-  { icon: '💊', title: '药品咨询推送', desc: '及时获取药品资讯与用药指导', link: '/' },
+  { icon: '📊', title: '后台数据管理', desc: '医生可管理患者档案、排班及预约数据统计', link: '/admin/data', doctorOnly: true },
+  { icon: '💊', title: '药品咨询推送', desc: '及时获取药品资讯与用药指导', link: '/', doctorOnly: true },
 ]
+
+const visibleFeatures = computed(() => {
+  if (store.role === 'patient') {
+    return allFeatures.filter(f => !f.doctorOnly)
+  }
+  return allFeatures
+})
 
 const pushes = ref<MedicinePush[]>([])
 

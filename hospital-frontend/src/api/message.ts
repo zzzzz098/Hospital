@@ -12,5 +12,8 @@ export const messageApi = {
   },
   allList() {
     return request.get('/api/messages/all')
+  },
+  delete(id: number) {
+    return request.delete(`/api/messages/${id}`)
   }
 }

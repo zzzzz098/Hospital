@@ -57,4 +57,11 @@ public class MessageController {
         }
         return ResponseResult.success("回复成功");
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseResult<String> delete(@PathVariable Integer id) {
+        StpUtil.checkLogin();
+        messageMapper.deleteById(id);
+        return ResponseResult.success("删除成功");
+    }
 }
