@@ -1,0 +1,21 @@
+# Java
+target/
+*.class
+*.jar
+*.war
+*.log
+
+# Maven
+.mvn/
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend
+hospital-frontend/node_modules/
+hospital-frontend/dist/
