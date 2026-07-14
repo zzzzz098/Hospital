@@ -24,7 +24,10 @@
     <div v-for="p in pushes" :key="p.id" class="card" style="margin-bottom:12px">
       <h3 style="color:#2d8f5e">{{ p.title }}</h3>
       <p style="color:#666;margin-top:8px;line-height:1.6">{{ p.content }}</p>
-      <span style="color:#999;font-size:12px">{{ p.pushTime }}</span>
+      <div class="push-footer">
+        <span style="color:#999;font-size:12px">{{ p.pushTime }}</span>
+        <button class="btn-delete" @click="delPush(p.id)">删除</button>
+      </div>
     </div>
   </div>
 </template>
@@ -56,9 +59,17 @@ async function createPush() {
     pushMsg.value = '发布失败'; pushMsgType.value = 'error-text'
   }
 }
+
+async function delPush(id: number) {
+  if (!confirm('确定删除这条推送吗？')) return
+  try { await adminApi.deletePush(id); pushes.value = pushes.value.filter(p => p.id !== id) } catch {}
+}
 </script>
 
 <style scoped>
 .push-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
 textarea { resize: none; font-family: inherit; }
+.push-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.btn-delete { background: none; border: 1px solid #e0e0e0; color: #999; font-size: 12px; cursor: pointer; padding: 4px 12px; border-radius: 4px; }
+.btn-delete:hover { color: #e74c3c; border-color: #e74c3c; }
 </style>

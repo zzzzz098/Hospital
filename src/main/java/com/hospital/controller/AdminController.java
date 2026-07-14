@@ -77,6 +77,13 @@ public class AdminController {
         return ResponseResult.success("发布成功");
     }
 
+    @DeleteMapping("/medicine-push/{id}")
+    public ResponseResult<String> deletePush(@PathVariable Integer id) {
+        if (!"doctor".equals(StpUtil.getTokenSession().getString("role"))) throw new RuntimeException("无权限");
+        medicinePushMapper.deleteById(id);
+        return ResponseResult.success("删除成功");
+    }
+
     @GetMapping("/medicine-push")
     public ResponseResult<List<MedicinePush>> listPushes() {
         return ResponseResult.success(medicinePushMapper.selectList(null));

@@ -16,6 +16,9 @@ export const adminApi = {
   listPushes() {
     return request.get('/api/admin/medicine-push')
   },
+  deletePush(id: number) {
+    return request.delete(`/api/admin/medicine-push/${id}`)
+  },
   updateSchedule(wid: number, data: { state: string; nsnum: number }) {
     return request.put(`/api/admin/schedule/${wid}`, data)
   }
