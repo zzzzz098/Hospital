@@ -16,18 +16,19 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private AdminMapper adminMapper;
-    @Autowired
-    private DoctorMapper doctorMapper;
-    @Autowired
-    private PatientMapper patientMapper;
+    @Autowired private AdminMapper adminMapper;
+    @Autowired private DoctorMapper doctorMapper;
+    @Autowired private PatientMapper patientMapper;
 
     @PostMapping("/login")
     public ResponseResult<Map<String, Object>> login(@RequestBody Map<String, String> body) {
         String account = body.get("account");
         String password = body.get("password");
-        String role = body.get("role");
+        // 自动识别身份：doc=医生，pat=患者，其他=管理员
+        String role;
+        if (account.startsWith("doc")) role = "doctor";
+        else if (account.startsWith("pat")) role = "patient";
+        else role = "admin";
 
         if ("admin".equals(role)) {
             Admin admin = adminMapper.selectById(account);
@@ -68,7 +69,6 @@ public class AuthController {
                 userInfo.put("account", patient.getAccount());
                 userInfo.put("name", patient.getName());
                 userInfo.put("role", "patient");
-                userInfo.put("email", patient.getEmail());
                 userInfo.put("integrity", patient.getIntegrity());
                 return buildLoginResult(userInfo);
             }
@@ -76,34 +76,35 @@ public class AuthController {
         return ResponseResult.error(1001, "用户名或密码错误");
     }
 
-    private ResponseResult<Map<String, Object>> buildLoginResult(Map<String, Object> userInfo) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("token", StpUtil.getTokenValue());
-        result.put("userInfo", userInfo);
-        return ResponseResult.success(result);
-    }
-
     @PostMapping("/register")
     public ResponseResult<String> register(@RequestBody Map<String, String> body) {
         String account = body.get("account");
         String password = body.get("password");
         String name = body.get("name");
-        String email = body.get("email");
-
+        // 账号必须为8位纯数字
+        if (account == null || !account.matches("\\d{8}")) {
+            return ResponseResult.error("账号必须为8位纯数字");
+        }
         LambdaQueryWrapper<Patient> w = new LambdaQueryWrapper<>();
         w.eq(Patient::getAccount, account);
         if (patientMapper.selectCount(w) > 0) {
             return ResponseResult.error("账号已存在");
         }
-
         Patient patient = new Patient();
         patient.setAccount(account);
         patient.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
         patient.setName(name);
-        patient.setEmail(email);
+        patient.setEmail("");
         patient.setIntegrity("100");
         patientMapper.insert(patient);
         return ResponseResult.success("注册成功");
+    }
+
+    private ResponseResult<Map<String, Object>> buildLoginResult(Map<String, Object> userInfo) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("token", StpUtil.getTokenValue());
+        result.put("userInfo", userInfo);
+        return ResponseResult.success(result);
     }
 
     private boolean checkPwd(String raw, String stored) {

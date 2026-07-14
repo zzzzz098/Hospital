@@ -13,8 +13,8 @@ export const useUserStore = defineStore('user', () => {
   const isLoggedIn = computed(() => !!token.value)
   const role = computed(() => userInfo.value?.role || '')
 
-  async function login(account: string, password: string, role: string) {
-    const res: any = await authApi.login(account, password, role)
+  async function login(account: string, password: string) {
+    const res: any = await authApi.login(account, password)
     token.value = res.token
     userInfo.value = res.userInfo
     localStorage.setItem('token', res.token)

@@ -16,29 +16,18 @@
           <label>密码</label>
           <input v-model="loginForm.password" type="password" placeholder="请输入密码" required />
         </div>
-        <div class="form-group">
-          <label>角色</label>
-          <select v-model="loginForm.role" required>
-            <option value="patient">患者</option>
-            <option value="doctor">医生</option>
-          </select>
-        </div>
         <p v-if="loginError" class="error-text">{{ loginError }}</p>
         <button type="submit" class="btn btn-primary" style="width:100%">登 录</button>
       </form>
 
       <form v-else @submit.prevent="handleRegister" class="login-form">
         <div class="form-group">
-          <label>账号</label>
-          <input v-model="regForm.account" type="text" placeholder="请输入账号" required />
+          <label>账号（8位数字）</label>
+          <input v-model="regForm.account" type="text" placeholder="请输入8位数字账号" maxlength="8" required />
         </div>
         <div class="form-group">
           <label>姓名</label>
           <input v-model="regForm.name" type="text" placeholder="请输入姓名" required />
-        </div>
-        <div class="form-group">
-          <label>邮箱</label>
-          <input v-model="regForm.email" type="email" placeholder="请输入邮箱" required />
         </div>
         <div class="form-group">
           <label>密码</label>
@@ -62,8 +51,8 @@ const router = useRouter()
 const route = useRoute()
 const store = useUserStore()
 const tab = ref('login')
-const loginForm = ref({ account: '', password: '', role: 'patient' })
-const regForm = ref({ account: '', password: '', name: '', email: '' })
+const loginForm = ref({ account: '', password: '' })
+const regForm = ref({ account: '', password: '', name: '' })
 const loginError = ref('')
 const regError = ref('')
 const regSuccess = ref('')
@@ -71,7 +60,7 @@ const regSuccess = ref('')
 async function handleLogin() {
   loginError.value = ''
   try {
-    await store.login(loginForm.value.account, loginForm.value.password, loginForm.value.role)
+    await store.login(loginForm.value.account, loginForm.value.password, '')
     const redirect = route.query.redirect as string || '/'
     router.push(redirect)
   } catch (e: any) {
@@ -82,10 +71,13 @@ async function handleLogin() {
 async function handleRegister() {
   regError.value = ''
   regSuccess.value = ''
+  if (!/^\d{8}$/.test(regForm.value.account)) {
+    regError.value = '账号必须为8位纯数字'; return
+  }
   try {
     await authApi.register(regForm.value)
     regSuccess.value = '注册成功！请切换到登录页登录'
-    regForm.value = { account: '', password: '', name: '', email: '' }
+    regForm.value = { account: '', password: '', name: '' }
   } catch (e: any) {
     regError.value = e?.response?.data?.message || e?.message || '注册失败'
   }
