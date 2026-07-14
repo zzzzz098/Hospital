@@ -2,9 +2,13 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { authApi } from '@/api/auth'
 
+function safeParse(str: string | null) {
+  try { return JSON.parse(str || 'null') } catch { return null }
+}
+
 export const useUserStore = defineStore('user', () => {
   const token = ref(localStorage.getItem('token') || '')
-  const userInfo = ref<any>(JSON.parse(localStorage.getItem('userInfo') || 'null'))
+  const userInfo = ref<any>(safeParse(localStorage.getItem('userInfo')))
 
   const isLoggedIn = computed(() => !!token.value)
   const role = computed(() => userInfo.value?.role || '')
