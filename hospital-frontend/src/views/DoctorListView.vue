@@ -48,7 +48,7 @@ const loading = ref(false)
 async function search() {
   loading.value = true
   try {
-    doctors.value = await doctorApi.list({ office: filterOffice.value, name: filterName.value }) as any
+    doctors.value = await doctorApi.list({ office: filterOffice.value, name: filterName.value, size: 100 }) as any
   } finally { loading.value = false }
 }
 
