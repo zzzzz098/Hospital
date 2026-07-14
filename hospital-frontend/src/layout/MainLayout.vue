@@ -2,15 +2,10 @@
   <div class="layout">
     <header class="header">
       <div class="container header-inner">
-        <router-link to="/" class="logo">🏥 在线预约挂号系统</router-link>
+        <router-link to="/" class="logo">健康医院在线预约挂号系统</router-link>
         <nav class="nav-links">
           <router-link to="/">首页</router-link>
           <template v-if="store.isLoggedIn">
-            <router-link v-if="store.role === 'patient'" to="/my-appointments">我的预约</router-link>
-            <router-link v-if="store.role === 'patient'" to="/messages">问诊留言</router-link>
-            <router-link v-if="store.role === 'doctor'" to="/schedule-manage">排班管理</router-link>
-            <router-link v-if="store.role === 'doctor'" to="/patient-files">患者档案</router-link>
-            <router-link v-if="store.role === 'doctor'" to="/admin/data">数据管理</router-link>
           </template>
         </nav>
         <div class="header-right">

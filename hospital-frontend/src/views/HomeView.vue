@@ -1,6 +1,13 @@
 <template>
   <div class="home">
-    <section class="hero">
+    <!-- 医生欢迎区 -->
+    <section v-if="store.role === 'doctor'" class="hero doctor-hero">
+      <h1>欢迎{{ store.userInfo?.name }}</h1>
+      <p class="subtitle">健康医院在线预约挂号系统</p>
+    </section>
+
+    <!-- 患者/未登录英雄区 -->
+    <section v-else class="hero">
       <h1>在线预约挂号系统</h1>
       <p class="subtitle">便捷就医 · 健康相伴</p>
       <router-link to="/doctors" class="btn btn-primary hero-btn">立即预约挂号</router-link>
@@ -36,20 +43,31 @@ import type { MedicinePush } from '@/types'
 
 const store = useUserStore()
 
-const allFeatures = [
+const patientFeatures = [
   { icon: '🔍', title: '科室医生查询', desc: '按科室或姓名快速查找医生，查看医生详情与排班信息', link: '/doctors' },
   { icon: '📅', title: '在线预约挂号', desc: '选择合适时段在线预约，方便快捷免排队', link: '/doctors' },
   { icon: '📋', title: '预约记录管理', desc: '随时查看预约记录，支持取消或修改预约', link: '/my-appointments' },
   { icon: '💬', title: '在线问诊留言', desc: '向医生在线留言咨询，获取专业医疗建议', link: '/messages' },
-  { icon: '📊', title: '后台数据管理', desc: '医生可管理患者档案、排班及预约数据统计', link: '/admin/data', doctorOnly: true },
-  { icon: '💊', title: '药品咨询推送', desc: '及时获取药品资讯与用药指导', link: '/', doctorOnly: true },
+]
+
+const doctorFeatures = [
+  { icon: '📊', title: '预约统计', desc: '查看已预约自己的患者列表', link: '/appointment-stats' },
+  { icon: '📋', title: '患者档案管理', desc: '查看所有患者的档案信息', link: '/patient-files' },
+  { icon: '💬', title: '问诊留言', desc: '回复患者的留言咨询，可删除自己的回复', link: '/messages' },
+  { icon: '💊', title: '药品推送', desc: '编写推送药品咨询信息给患者', link: '/admin/data' },
+  { icon: '📅', title: '排班管理', desc: '查看和管理所有医生的排班信息', link: '/schedule-manage' },
+]
+
+const guestFeatures = [
+  { icon: '🔍', title: '科室医生查询', desc: '按科室或姓名快速查找医生，查看医生详情与排班信息', link: '/doctors' },
+  { icon: '📅', title: '在线预约挂号', desc: '选择合适时段在线预约，方便快捷免排队', link: '/doctors' },
+  { icon: '💊', title: '药品咨询', desc: '及时获取药品资讯与用药指导', link: '/' },
 ]
 
 const visibleFeatures = computed(() => {
-  if (store.role === 'patient') {
-    return allFeatures.filter(f => !f.doctorOnly)
-  }
-  return allFeatures
+  if (store.role === 'doctor') return doctorFeatures
+  if (store.role === 'patient') return patientFeatures
+  return guestFeatures
 })
 
 const pushes = ref<MedicinePush[]>([])
@@ -62,6 +80,8 @@ onMounted(async () => {
 <style scoped>
 .hero { background: linear-gradient(135deg, #2d8f5e 0%, #1a6b40 50%, #0d4f28 100%); color: #fff; text-align: center; padding: 80px 20px; margin-bottom: 40px; border-radius: 0 0 40px 40px; }
 .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; letter-spacing: 4px; }
+.doctor-hero h1 { font-size: 36px; }
+.doctor-hero { padding: 50px 20px; }
 .subtitle { font-size: 20px; opacity: 0.9; margin-bottom: 32px; }
 .hero-btn { font-size: 18px; padding: 14px 40px; background: #fff; color: #2d8f5e; }
 .hero-btn:hover { background: #e8f5e9; }

@@ -1,6 +1,15 @@
 <template>
   <div>
-    <h1 class="page-title">我的排班管理</h1>
+    <h1 class="page-title">排班管理</h1>
+    <div class="card" style="margin-bottom:24px">
+      <div class="form-group">
+        <label>选择医生</label>
+        <select v-model="selectedDid" @change="loadSchedule">
+          <option v-for="d in doctors" :key="d.did" :value="d.did">{{ d.dname }} - {{ d.office }}</option>
+        </select>
+      </div>
+    </div>
+
     <div v-if="loading" class="loading">加载中...</div>
     <div v-else-if="schedule.length === 0" class="empty">暂无排班数据</div>
     <div v-else class="grid-3">
@@ -27,12 +36,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { useUserStore } from '@/stores/user'
 import { doctorApi } from '@/api/doctor'
 import { adminApi } from '@/api/admin'
-import type { WorkDay } from '@/types'
+import type { Doctor, WorkDay } from '@/types'
 
-const store = useUserStore()
+const doctors = ref<Doctor[]>([])
+const selectedDid = ref<number | null>(null)
 const schedule = ref<WorkDay[]>([])
 const loading = ref(false)
 const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
@@ -41,23 +50,25 @@ const msgs = reactive<Record<number, string>>({})
 const msgTypes = reactive<Record<number, string>>({})
 
 onMounted(async () => {
+  try { doctors.value = await doctorApi.list({ size: 100 }) as any; if (doctors.value.length) { selectedDid.value = doctors.value[0].did; loadSchedule() } } catch {}
+})
+
+async function loadSchedule() {
+  if (!selectedDid.value) return
   loading.value = true
   try {
-    const did = store.userInfo?.id
-    schedule.value = await doctorApi.schedule(did) as any
+    schedule.value = await doctorApi.schedule(selectedDid.value) as any
     schedule.value.forEach(s => { edits[s.wid] = { state: s.state, nsnum: s.nsnum } })
   } catch {}
   loading.value = false
-})
+}
 
 async function save(wid: number) {
   try {
     await adminApi.updateSchedule(wid, edits[wid])
-    msgs[wid] = '保存成功'
-    msgTypes[wid] = 'success-text'
+    msgs[wid] = '保存成功'; msgTypes[wid] = 'success-text'
   } catch {
-    msgs[wid] = '保存失败'
-    msgTypes[wid] = 'error-text'
+    msgs[wid] = '保存失败'; msgTypes[wid] = 'error-text'
   }
 }
 </script>

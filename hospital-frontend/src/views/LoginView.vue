@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
     <div class="login-card card">
-      <h1 class="login-title">🏥 在线预约挂号系统</h1>
+      <h1 class="login-title">健康医院在线预约挂号系统</h1>
       <div class="tabs">
         <button :class="['tab', { active: tab === 'login' }]" @click="tab = 'login'">登录</button>
         <button :class="['tab', { active: tab === 'register' }]" @click="tab = 'register'">注册</button>
