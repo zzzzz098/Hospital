@@ -18,7 +18,7 @@
     </section>
 
     <section class="pushed" v-if="pushes.length">
-      <h2 class="section-title">💊 药品咨询推送</h2>
+      <h2 class="section-title">💊 药品咨询</h2>
       <div v-for="p in pushes" :key="p.id" class="card push-card">
         <h3>{{ p.title }}</h3>
         <p>{{ p.content }}</p>
