@@ -48,14 +48,8 @@ function loadSlots() {
   selectedSlot.value = null
 }
 
-function getDateForDay(dayNum: number) {
-  const now = new Date()
-  const currentDay = now.getDay()
-  const diff = dayNum - currentDay
-  const target = new Date(now)
-  target.setDate(now.getDate() + (diff <= 0 ? diff + 7 : diff))
-  return target.toISOString().split('T')[0]
-}
+const dateMap: Record<number, string> = { 0:'2026-06-07', 1:'2026-06-08', 2:'2026-06-02', 3:'2026-06-03', 4:'2026-06-04', 5:'2026-06-05', 6:'2026-06-06' }
+function getDateForDay(dayNum: number) { return dateMap[dayNum] || '' }
 
 onMounted(async () => {
   const did = Number(route.params.did)
@@ -64,6 +58,7 @@ onMounted(async () => {
     schedule.value = await doctorApi.schedule(did) as any
     availableDays.value = [...new Set(schedule.value.map(s => s.worktime))]
       .map((w: string) => ({ worktime: w, label: getDateForDay(Number(w)) }))
+      .sort((a, b) => a.label.localeCompare(b.label))
   } catch {}
 })
 

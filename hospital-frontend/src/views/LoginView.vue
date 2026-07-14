@@ -22,7 +22,7 @@
 
       <form v-else @submit.prevent="handleRegister" class="login-form">
         <div class="form-group">
-          <label>账号（8位数字）</label>
+          <label>账号</label>
           <input v-model="regForm.account" type="text" placeholder="请输入8位数字账号" maxlength="8" required />
         </div>
         <div class="form-group">

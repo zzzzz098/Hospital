@@ -27,8 +27,8 @@ public class AuthController {
         // 自动识别身份：doc=医生，pat=患者，其他=管理员
         String role;
         if (account.startsWith("doc")) role = "doctor";
-        else if (account.startsWith("pat")) role = "patient";
-        else role = "admin";
+        else if (account.equals("admin")) role = "admin";
+        else role = "patient";
 
         if ("admin".equals(role)) {
             Admin admin = adminMapper.selectById(account);
