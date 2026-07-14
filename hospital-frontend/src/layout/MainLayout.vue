@@ -5,7 +5,6 @@
         <router-link to="/" class="logo">🏥 在线预约挂号系统</router-link>
         <nav class="nav-links">
           <router-link to="/">首页</router-link>
-          <router-link to="/doctors">找医生</router-link>
           <template v-if="store.isLoggedIn">
             <router-link v-if="store.role === 'patient'" to="/my-appointments">我的预约</router-link>
             <router-link v-if="store.role === 'patient'" to="/messages">问诊留言</router-link>
@@ -32,7 +31,7 @@
     </main>
     <footer class="footer">
       <div class="container">
-        <p>© 2024 在线预约挂号系统 - 便捷就医 · 健康相伴</p>
+        <p>© 2026 在线预约挂号系统 - 便捷就医 · 健康相伴</p>
       </div>
     </footer>
   </div>

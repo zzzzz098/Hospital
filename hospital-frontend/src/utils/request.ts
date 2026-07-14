@@ -13,7 +13,14 @@ request.interceptors.request.use(config => {
 })
 
 request.interceptors.response.use(
-  response => response.data,
+  response => {
+    const body = response.data
+    if (body.code === 200) {
+      return body.data  // 解包 ResponseResult，只返回 data 部分
+    }
+    // 业务错误：抛出异常让调用方 catch
+    return Promise.reject(new Error(body.message || '请求失败'))
+  },
   error => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
